@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 /**
  * 用于使用注解来扫描提供rpc 服务的bean
  *
- * value 是对外暴露的接口 jsf provider
+ * value 是对外暴露的接口 provider
  */
 
 @Target({ElementType.TYPE})
