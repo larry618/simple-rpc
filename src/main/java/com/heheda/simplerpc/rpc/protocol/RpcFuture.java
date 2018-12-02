@@ -59,8 +59,8 @@ public class RpcFuture implements Future<RpcResponse> {
 
     static class RpcSync extends AbstractQueuedSynchronizer {
 
-        private static final int done = 1;  // 已经执行完了 1 代表锁没有任何线程获取
-        private static final int pending = 0; // 处于等待状态, 有别的线程正在使用
+        private static final int done = 1;  // 已经执行完了 1
+        private static final int pending = 0; // 初始状态就是 0, 开始就是未完成状态, 处理完时会更新为 1
 
         @Override
         protected boolean tryAcquire(int arg) {
@@ -71,7 +71,7 @@ public class RpcFuture implements Future<RpcResponse> {
         @Override
         protected boolean tryRelease(int arg) {
             if (getState() == pending) {
-                return compareAndSetState(pending, done);
+                return compareAndSetState(pending, done);  // 执行完时把状态更新为 1
             } else {
                 return true;
             }
