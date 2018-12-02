@@ -4,6 +4,7 @@ import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -22,11 +23,8 @@ public class ServiceRegistry {
 
     private CountDownLatch latch = new CountDownLatch(1);
 
+    @Value("${registry.address}")
     private String registryAddress;
-
-    public ServiceRegistry(String registryAddress) {
-        this.registryAddress = registryAddress;
-    }
 
     public void register(String data) {
         if (data != null) {

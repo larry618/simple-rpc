@@ -1,11 +1,10 @@
-package com.heheda.simplerpc.container.bootstrap;
+package com.heheda.simplerpc.test.server;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RpcBootstrap {
 
-
     public static void main(String[] args) {
-        new ClassPathXmlApplicationContext("spring.xml");  // 按道理不应该由框架在做这些事情
+        new ClassPathXmlApplicationContext("server-spring.xml");
     }
 }

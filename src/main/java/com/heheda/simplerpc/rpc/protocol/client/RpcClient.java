@@ -3,9 +3,11 @@ package com.heheda.simplerpc.rpc.protocol.client;
 import com.heheda.simplerpc.cluster.RpcConnectionManager;
 import com.heheda.simplerpc.rpc.proxy.RpcServiceBeanProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Proxy;
 
+@Service
 public class RpcClient {
 
     @Autowired
@@ -19,5 +21,10 @@ public class RpcClient {
                 new Class[] {serviceInterface},
                 new RpcServiceBeanProxy(serviceInterface, rpcConnectionManager)
         );
+    }
+
+
+    public void stop() {
+        rpcConnectionManager.stop();
     }
 }

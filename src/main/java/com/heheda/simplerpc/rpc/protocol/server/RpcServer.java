@@ -104,7 +104,7 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
         ChannelFuture channelFuture = serverBootstrap.bind(arr[0], Integer.parseInt(arr[1])).sync();
         logger.info("Server started on " + serverAddress);
         export();
-        channelFuture.channel().closeFuture().sync();
+//        channelFuture.channel().closeFuture().sync();
     }
 
 

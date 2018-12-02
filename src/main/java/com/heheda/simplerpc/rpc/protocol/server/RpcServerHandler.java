@@ -35,6 +35,8 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RpcRequest rpcRequest) throws Exception {
 
+
+        logger.info("received request: ", rpcRequest.toString());
         // 提交到线程池异步执行
         submit(new Runnable() {
 

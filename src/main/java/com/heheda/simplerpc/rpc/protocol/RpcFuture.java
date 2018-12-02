@@ -1,11 +1,14 @@
 package com.heheda.simplerpc.rpc.protocol;
 
+import lombok.extern.log4j.Log4j;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
+@Log4j
 public class RpcFuture implements Future<RpcResponse> {
 
     private RpcRequest request;
@@ -50,17 +53,19 @@ public class RpcFuture implements Future<RpcResponse> {
 
     public void done(RpcResponse response) {
         this.response = response;
+        log.info("done");
         sync.release(1);
     }
 
     static class RpcSync extends AbstractQueuedSynchronizer {
 
-        private static final int done = 0;  // 已经执行完了 0 代表锁没有任何线程获取
-        private static final int pending = 1; // 处于等待状态, 有别的线程正在使用
+        private static final int done = 1;  // 已经执行完了 1 代表锁没有任何线程获取
+        private static final int pending = 0; // 处于等待状态, 有别的线程正在使用
 
         @Override
         protected boolean tryAcquire(int arg) {
-            return compareAndSetState(done, pending);
+//            return compareAndSetState(done, pending);
+            return getState() == done;
         }
 
         @Override

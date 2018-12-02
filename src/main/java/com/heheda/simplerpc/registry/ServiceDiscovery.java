@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class ServiceDiscovery {
 
     private ZooKeeper zookeeper;
 
-    public ServiceDiscovery(String registryAddress) {
-        this.registryAddress = registryAddress;
+    @PostConstruct
+    public void start() {
         zookeeper = connectServer();
         if (zookeeper != null) {
             watchNode(zookeeper);

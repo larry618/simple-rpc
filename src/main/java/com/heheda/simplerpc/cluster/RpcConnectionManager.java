@@ -15,6 +15,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.net.InetSocketAddress;
@@ -36,6 +38,7 @@ import java.util.concurrent.Executors;
 @Service
 public class RpcConnectionManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(RpcConnectionManager.class);
     private Map<SocketAddress, RpcClientHandler> remoteAddressMap = new ConcurrentHashMap<>();
 
     private CopyOnWriteArrayList<RpcClientHandler> connectedHandlers = new CopyOnWriteArrayList<>();
@@ -109,8 +112,8 @@ public class RpcConnectionManager {
 
                         socketChannel.pipeline()
                                 .addLast(new LengthFieldBasedFrameDecoder(65536, 0, 4, 0, 0))
-                                .addLast(new RpcDecoder(RpcRequest.class))
-                                .addLast(new RpcEncoder(RpcResponse.class))
+                                .addLast(new RpcDecoder(RpcResponse.class))
+                                .addLast(new RpcEncoder(RpcRequest.class))
                                 .addLast(rpcClientHandler);
                     }
                 });
@@ -118,14 +121,22 @@ public class RpcConnectionManager {
         future.addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                addHandler(rpcClientHandler);
+
+                if (channelFuture.isSuccess()) {
+                    logger.info("Successfully connect to remote server. remote peer = " + address);
+                    RpcClientHandler handler = channelFuture.channel().pipeline().get(RpcClientHandler.class);
+                    addHandler(handler);
+                } else {
+                    logger.info("connect failed to remote server. remote peer = " + address);
+                }
+
             }
         });
     }
 
 
     private void addHandler(RpcClientHandler rpcClientHandler) {
-        SocketAddress remotePeer = rpcClientHandler.getRemotePeer();
+        SocketAddress remotePeer = rpcClientHandler.getChannel().remoteAddress();
         remoteAddressMap.put(remotePeer, rpcClientHandler);
         connectedHandlers.add(rpcClientHandler);
     }
@@ -136,6 +147,15 @@ public class RpcConnectionManager {
         }
         remoteAddressMap.clear();
         connectedHandlers.clear();
+    }
+
+    public void stop() {
+        for (RpcClientHandler connectedServerHandler : connectedHandlers) {
+            connectedServerHandler.close();
+        }
+
+        executorService.shutdown();
+        clientGroup.shutdownGracefully();
     }
 
 }
