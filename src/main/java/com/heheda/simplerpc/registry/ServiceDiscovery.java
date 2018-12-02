@@ -1,11 +1,14 @@
 package com.heheda.simplerpc.registry;
 
+import com.heheda.simplerpc.cluster.RpcConnectionManager;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooKeeper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -29,7 +32,12 @@ public class ServiceDiscovery {
 
     private volatile List<String> dataList = new ArrayList<>();
 
+    @Value("${registry.address}")
     private String registryAddress;
+
+    @Autowired
+    private RpcConnectionManager rpcConnectionManager;
+
     private ZooKeeper zookeeper;
 
     public ServiceDiscovery(String registryAddress) {
@@ -92,14 +100,14 @@ public class ServiceDiscovery {
             this.dataList = dataList;
 
             logger.debug("Service discovery triggered updating connected server node.");
-            UpdateConnectedServer();
+            updateConnectedServer();
         } catch (KeeperException | InterruptedException e) {
             logger.error("", e);
         }
     }
 
-    private void UpdateConnectedServer(){
-        ConnectManage.getInstance().updateConnectedServer(this.dataList);
+    private void updateConnectedServer(){
+        rpcConnectionManager.updateConnectedServer(this.dataList);
     }
 
     public void stop(){

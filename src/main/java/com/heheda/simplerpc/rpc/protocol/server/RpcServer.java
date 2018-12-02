@@ -1,8 +1,12 @@
-package com.heheda.simplerpc.rpc.protocol;
+package com.heheda.simplerpc.rpc.protocol.server;
 
 
 import com.heheda.simplerpc.config.annotation.RpcService;
 import com.heheda.simplerpc.registry.ServiceRegistry;
+import com.heheda.simplerpc.rpc.protocol.RpcDecoder;
+import com.heheda.simplerpc.rpc.protocol.RpcEncoder;
+import com.heheda.simplerpc.rpc.protocol.RpcRequest;
+import com.heheda.simplerpc.rpc.protocol.RpcResponse;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -24,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 public class RpcServer implements ApplicationContextAware, InitializingBean {
@@ -98,12 +103,23 @@ public class RpcServer implements ApplicationContextAware, InitializingBean {
 
         ChannelFuture channelFuture = serverBootstrap.bind(arr[0], Integer.parseInt(arr[1])).sync();
         logger.info("Server started on " + serverAddress);
+        export();
+        channelFuture.channel().closeFuture().sync();
+    }
 
-        if (serviceRegistry != null) {
-            serviceRegistry.register(serverAddress);
+
+    private void export() {
+        if (serverAddress == null) {
+            return;
         }
 
-        channelFuture.channel().closeFuture().sync();
+//        for (String serviceName :handlerMap.keySet() ) {
+//            String data = serviceName + "@" + serverAddress;
+//            serviceRegistry.register(data);
+//        }
+
+        serviceRegistry.register(serverAddress);
+
     }
 
 

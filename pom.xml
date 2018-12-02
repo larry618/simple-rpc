@@ -79,6 +79,13 @@
             <version>4.0</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.4</version>
+        </dependency>
+
         <!-- Objenesis -->
         <dependency>
             <groupId>org.objenesis</groupId>
@@ -116,6 +123,13 @@
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.46</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
         </dependency>
 
     </dependencies>

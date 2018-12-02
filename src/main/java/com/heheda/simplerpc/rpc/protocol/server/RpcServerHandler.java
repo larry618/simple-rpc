@@ -1,6 +1,8 @@
-package com.heheda.simplerpc.rpc.protocol;
+package com.heheda.simplerpc.rpc.protocol.server;
 
 
+import com.heheda.simplerpc.rpc.protocol.RpcRequest;
+import com.heheda.simplerpc.rpc.protocol.RpcResponse;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
